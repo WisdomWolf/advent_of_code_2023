@@ -1,4 +1,5 @@
 from collections import Counter
+from functools import reduce
 import re
 
 CONFIG = {
@@ -27,6 +28,18 @@ def determine_if_possible(data, config):
         
     return True
 
+
+def calculate_cube_power(data):
+    min_counter = Counter(red=1, blue=1, green=1)
+    sets = data.split('; ')
+    for dataset in sets:
+        color_counts = count_colors(dataset)
+        for color, count in color_counts.items():
+            if count > min_counter[color]:
+                min_counter[color] = count
+    
+    return reduce(lambda x,y: x*y, min_counter.values())
+
 def extract_data(line):
      match = re.search(r'(?<=^Game\s)\d+', line)
      game_id = match.group()
@@ -44,7 +57,16 @@ def solution(lines, config):
     return sum(valid_game_ids)
 
 
+def new_solution(lines):
+    powers = []
+    for line in lines:
+        _, data = extract_data(line)
+        powers.append(calculate_cube_power(data))
+    
+    return sum(powers)
+
+
 if __name__ == '__main__':
     with open('input.txt') as f:
         lines = f.readlines()
-        print(solution(lines, CONFIG))
+        print(new_solution(lines))
