@@ -19,7 +19,7 @@ def get_indexes(lines, pattern):
     return indexes
 
 
-def adj_finder(matrix, position):
+def find_adjacent_cells(matrix, position):
     adj = []
 
     for dx in range(-1, 2):
@@ -28,7 +28,7 @@ def adj_finder(matrix, position):
             rangeY = range(0, matrix[1])
 
             (newX, newY) = (position[0]+dx, position[1]+dy)
-            
+
             if (newX in rangeX) and (newY in rangeY) and (dx, dy) != (0,0):
                 adj.append((newX, newY))
     return adj
@@ -37,5 +37,11 @@ def adj_finder(matrix, position):
 def solution():
     with open('input.txt') as f:
         lines = [l.strip() for l in f.readlines()]
+    total_lines = len(lines)
+    total_cols = len(lines[0])
+    matrix = total_lines, total_cols
+
     symbol_indexes = get_indexes(lines, SYMBOL_MASK)
     digit_indexes = get_indexes(lines, DIGIT_MASK)
+    for index in symbol_indexes:
+        adjacent_cells = find_adjacent_cells(matrix, index)
