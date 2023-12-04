@@ -29,9 +29,19 @@ def find_adjacent_cells(matrix, position):
 
             (newX, newY) = (position[0]+dx, position[1]+dy)
 
-            if (newX in rangeX) and (newY in rangeY) and (dx, dy) != (0,0):
+            if (
+                (newX in rangeX)
+                and (newY in rangeY)
+                and (dx, dy) != (0,0)
+            ):
                 adj.append((newX, newY))
     return adj
+
+
+def build_matrix(coord_list, max_rows):
+    matrix = [[] for _ in range(max_rows)]
+    for row, col in coord_list:
+        matrix[row].append(col)
 
 
 def solution():
@@ -41,7 +51,13 @@ def solution():
     total_cols = len(lines[0])
     matrix = total_lines, total_cols
 
-    symbol_indexes = get_indexes(lines, SYMBOL_MASK)
     digit_indexes = get_indexes(lines, DIGIT_MASK)
+    digit_matrix = build_matrix(digit_indexes, total_lines)
+    symbol_indexes = get_indexes(lines, SYMBOL_MASK)
+
     for index in symbol_indexes:
         adjacent_cells = find_adjacent_cells(matrix, index)
+        adjacency_matrix = build_matrix(adjacent_cells, total_lines)
+        for row in adjacency_matrix:
+            for col in row:
+                
