@@ -60,4 +60,4 @@ def solution():
         adjacency_matrix = build_matrix(adjacent_cells, total_lines)
         for row in adjacency_matrix:
             for col in row:
-                
+                ...
