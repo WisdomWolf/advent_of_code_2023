@@ -27,29 +27,36 @@ def extract_map_args(lines):
 
 
 def build_maps(map_args):
-    maps = defaultdict(dict)
+    maps = defaultdict(list)
     for map_name, args_list in map_args.items():
         if '_' in map_name:
             for args in args_list:
                 dest_start, src_start, length = args
-                new_map = {
-                    src: dest
-                    for src, dest in zip(
-                        range(src_start, src_start + length),
-                        range(dest_start, dest_start + length)
-                    )
-                }
-                maps[map_name].update(new_map)
+                new_tuple = (src_start, src_start + length, dest_start)
+                maps[map_name].append(new_tuple)
+                maps[map_name].sort()
     return maps
 
 
 def get_location_for_seed(seed, category_maps):
+    result = seed
     for key in CATEGORIES:
-        # print(f'calculating {key} for: {seed}')
-        mapper_dict = category_maps[key]
-        seed = mapper_dict.get(seed, seed)
-        # print(f'Result: {seed}')
-    return seed
+        # print(f'calculating {key} for: {result}')
+        mapper_ranges = category_maps[key]
+        for start, end, dest in mapper_ranges:
+            # print(f'mapper range: {start}, {end}, {dest}')
+            if start <= result < end:
+                offset = result - start
+                # print('offset:', offset)
+                result = dest + offset
+                # print('result found in range')
+                break
+        else:
+            ...
+            # print('result not found in any range')
+        # print(f'Result: {result}')
+    
+    return result
 
 
 def solution(lines):
