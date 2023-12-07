@@ -4,6 +4,7 @@ from functools import total_ordering
 
 
 LABELS = (
+    'J',
     '2',
     '3',
     '4',
@@ -13,7 +14,6 @@ LABELS = (
     '8',
     '9',
     'T',
-    'J',
     'Q',
     'K',
     'A'
@@ -56,19 +56,28 @@ class Hand:
         hand_type = HAND_TYPES[0]
 
         counter = Counter(hand)
-        counts = sorted(counter.values(), reverse=True)
+        counts = sorted(counter.items(), key=lambda x: x[1], reverse=True)
+        if len(counts) > 1:
+            high_count = counts[0][1] + counter.get('J', 0) if counts[0][0] != 'J' else counts[1][1] + counts[0][1]
+        else:
+            high_count = counts[0][1]
+        
+        if len(counts) > 2:
+            penult_count = counts[1][1] if counts[0][0] != 'J' else counts[2][1]
+        else:
+            penult_count = counts[1][1] if counts[0][0] != 'J' else 0
 
-        if counts[0] == 5:
+        if high_count == 5:
             hand_type = HAND_TYPES[6]
-        elif counts[0] == 4:
+        elif high_count == 4:
             hand_type = HAND_TYPES[5]
-        elif counts[0] == 3 and counts[1] == 2:
+        elif high_count == 3 and penult_count == 2:
             hand_type = HAND_TYPES[4]
-        elif counts[0] == 3:
+        elif high_count == 3:
             hand_type = HAND_TYPES[3]
-        elif counts[0] == 2 and counts[1] == 2:
+        elif high_count == 2 and penult_count == 2:
             hand_type = HAND_TYPES[2]
-        elif counts[0] == 2:
+        elif high_count == 2:
             hand_type = HAND_TYPES[1]
         
         return hand_type
