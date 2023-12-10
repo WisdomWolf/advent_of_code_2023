@@ -23,7 +23,8 @@ def calc_next_value(seq):
     next_val = diff_list.pop()[0]
     diff_list.reverse()
     for diffs in diff_list:
-        next_val += diffs[-1]
+        next_val = diffs[0] - next_val
+        # print(next_val)
     # print(f'next_val: {next_val} | {seq}')
     return next_val
 
