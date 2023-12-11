@@ -37,17 +37,23 @@ def get_empty_rows(df):
 
 
 def expand_rows(df, row_list, multiplier=1):
+    multiplier -= 1
     df = df.copy()
+    df_list = [df]
     for row in row_list:
-        base_increment = 1 / (multiplier + 1)
-        increment = base_increment
-        # print(f'Increment: {increment}')
-        for i in range(multiplier):
-            # print(f'pass: {i}/{multiplier}')
-            # print(f'Inserting new row at {row + increment}')
-            df.loc[row + increment] = ['.'] * df.shape[1]
-            increment = base_increment + increment
+        empty_df = build_empty_row_df(df.columns, row, multiplier)
+        df_list.append(empty_df)
+    df = pd.concat(df_list)
     df = df.sort_index().reset_index(drop=True)
+    return df
+
+
+def build_empty_row_df(cols, start, multiplier):
+    index = np.arange(start, start + 1, 1 / multiplier)
+    dict_list = []
+    for i in range(multiplier):
+        dict_list.append({col: '.' for col in cols})
+    df = pd.DataFrame(dict_list, index=index)
     return df
 
 
@@ -122,7 +128,7 @@ def calc_total_distances(coord_list):
     return total_distance
 
 
-def solution(lines, multiplier=1):
+def solution(lines, multiplier=1_000_000):
     df = build_df(lines)
     df = expand_df(df, multiplier)
     coords = get_galaxy_coords(df)
